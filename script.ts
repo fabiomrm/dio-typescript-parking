@@ -1,7 +1,7 @@
 interface IVehicle {
     name: string;
     plate: string;
-    parkDate: Date;
+    parkDate: Date | string;
 }
 
 
@@ -52,7 +52,7 @@ interface IVehicle {
             if(!confirm('Deseja enecerrar?')) return;
 
             save(read().filter(vehicle => vehicle.plate !== plate))
-            
+
             render();
         }
 
