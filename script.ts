@@ -8,6 +8,13 @@ interface IVehicle {
 (function () {
     const $ = (query: string): HTMLInputElement | null => document.querySelector(query);
 
+    function calcTime(mil: number) {
+        const min = Math.floor(mil/ 60000)
+        const sec = Math.floor((mil % 60000) / 1000)
+
+        return `${min}m ${sec}s`;
+    }
+
     function parking() {
         function read(): Array<IVehicle>  {
             return localStorage.parking ? JSON.parse(localStorage.parking) : [];
@@ -23,6 +30,10 @@ interface IVehicle {
                 <td><button class="delete" data-plate="${vehicle.plate}">X</button></td>
             `
             
+            row.querySelector(".delete")?.addEventListener("click", function() {
+                remove(this.dataset.plate)
+            })
+
             $("#parking")?.appendChild(row);
 
             if(toSave) save([...read(), vehicle]);
@@ -33,8 +44,16 @@ interface IVehicle {
             localStorage.setItem("parking", JSON.stringify(vehicles));
         }
 
-        function remove() {
+        function remove(plate: string) {
+            const {parkDate }  = read().find(vehicle => vehicle.plate === plate)
+            
+            const time = calcTime(new Date().getTime() - parkDate.getTime());
 
+            if(!confirm('Deseja enecerrar?')) return;
+
+            save(read().filter(vehicle => vehicle.plate !== plate))
+            
+            render();
         }
 
 
